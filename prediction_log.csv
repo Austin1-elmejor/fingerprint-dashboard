@@ -1,0 +1,10 @@
+Image,Prediction,Confidence (%)
+5__M_Left_index_finger.BMP,A+,99.42
+6__M_Left_index_finger.BMP,A+,99.99
+28__M_Right_index_finger.BMP,AB-,58.52
+17__M_Right_ring_finger.BMP,O+,65.04
+17__M_Right_ring_finger.BMP,O+,65.04
+17__M_Right_ring_finger.BMP,O+,65.04
+24__F_Left_thumb_finger.BMP,O-,93.74
+22__M_Left_middle_finger.BMP,O-,56.04
+22__M_Left_middle_finger.BMP,O-,56.04
