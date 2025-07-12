@@ -5,10 +5,26 @@ import time
 import tensorflow as tf
 import pandas as pd
 import datetime
+import cv2
+
+def is_probably_fingerprint(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(blur, threshold1=30, threshold2=100)
+    edge_density = np.sum(edges) / edges.size
+    return edge_density > 0.01  # You can tune this value based on test images
+
 
 # Set up dashboard
 st.set_page_config("Fingerprint Dashboard", layout="wide")
 st.title("🧬 Fingerprint Prediction Dashboard")
+
+st.markdown("""
+> ⚠️ **Disclaimer:**  
+> This dashboard is designed for educational and experimental use. Blood group predictions are valid only when uploading clear fingerprint scans. Using unrelated or non-biometric images may produce inaccurate results.  
+> Always consult qualified medical professionals for verified blood typing.
+""")
+
 
 # Global variables
 class_names = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
@@ -51,19 +67,33 @@ def predict_blood_group(image):
     return predicted_class, confidence
 
 # File uploader
+# uploaded_file = st.file_uploader("📂 Upload Fingerprint Image", type=["bmp", "png", "jpg"])
+
 uploaded_file = st.file_uploader("📂 Upload Fingerprint Image", type=["bmp", "png", "jpg"])
 
 if uploaded_file:
     img = Image.open(uploaded_file)
     st.image(img, caption="🔍 Uploaded Fingerprint", width=300)
 
-    with st.spinner("Analyzing scan..."):
-        time.sleep(1.5)
-        result, confidence = predict_blood_group(img)
-        log_prediction(result, confidence, uploaded_file.name)
+    # Convert to NumPy array for fingerprint check
+    image_np = np.array(img)
+    if is_probably_fingerprint(image_np):
+        st.success("✅ Image appears valid for fingerprint prediction.")
 
-    st.success(f"🎯 **Predicted Blood Group:** `{result}`")
-    st.info(f"🔬 Confidence: `{confidence:.2f}%`")
+        with st.spinner("Analyzing scan..."):
+            time.sleep(1.5)
+            result, confidence = predict_blood_group(img)
+            log_prediction(result, confidence, uploaded_file.name)
+
+        if confidence >= 70:
+            st.success(f"🎯 **Predicted Blood Group:** `{result}`")
+            st.info(f"🔬 Confidence: `{confidence:.2f}%`")
+        else:
+            st.warning("⚠️ Confidence too low — prediction may be unreliable. Try a clearer scan.")
+    else:
+        st.warning("⚠️ This image may not be a valid fingerprint. Please upload a biometric scan.")
+
+
 
 # Display log
 st.subheader("📊 Prediction Log")
