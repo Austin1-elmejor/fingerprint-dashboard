@@ -1,6 +1,6 @@
 # 🧬 Fingerprint Blood Group Prediction Dashboard
 
-An AI-powered biometric dashboard built with Streamlit that predicts blood group from fingerprint images using a deep learning model. Users can upload images, view confidence scores, track predictions in real-time, and download results in CSV format.
+A biometric dashboard built with Streamlit that predicts blood group from fingerprint images using a deep learning model. Users can upload images, view confidence scores, track predictions in real-time, and download results in CSV format.
 
 ---
 
